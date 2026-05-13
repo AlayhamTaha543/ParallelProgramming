@@ -17,15 +17,11 @@ class CartItemViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsCustomer, IsCartItemOwner]
 
     def get_cart(self):
-        cart_id = self.kwargs['cart_pk']
-        return get_object_or_404(Cart, id=cart_id)
+        return self.request.user.cart
 
     def get_queryset(self):
         cart = self.get_cart()
-        return CartItem.objects.filter(
-            cart=cart,
-            cart__user=self.request.user
-        )
+        return CartItem.objects.filter(cart=cart)
 
     def create(self, request, *args, **kwargs):
         cart = self.get_cart()
