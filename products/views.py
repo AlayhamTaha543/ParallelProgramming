@@ -14,6 +14,7 @@ class ProductViewSet(ModelViewSet):
 
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated, IsProductStoreOwner]
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete']
 
     def get_queryset(self):
         store_id = self.kwargs['store_pk']

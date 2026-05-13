@@ -12,3 +12,9 @@ class User(AbstractUser):
         choices=Roles.choices
     )
 
+    def save(self, *args, **kwargs):
+        is_new = self._state.adding
+        super().save(*args, **kwargs)
+        if is_new and self.role == self.Roles.CUSTOMER:
+            from cart.models import Cart
+            Cart.objects.get_or_create(user=self)
