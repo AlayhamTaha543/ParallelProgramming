@@ -54,7 +54,7 @@ def process_chunk(index, ids, simulate_bad_product_id=0):
         queryset = OrderItem.objects.select_related('order', 'product', 'product__store').filter(id__in=ids)
         for item in queryset:
             try:
-                # Testing hook: lets the test command prove that deadLetter works.
+                # For testing, lets the test command prove that deadLetter works.
                 if simulate_bad_product_id and item.product_id == simulate_bad_product_id:
                     raise ValueError('Simulated item failure for deadLetter demo')
 
@@ -86,7 +86,7 @@ def process_chunk(index, ids, simulate_bad_product_id=0):
                     'reason': str(exc),
                 })
     except Exception as exc:
-        # Chunk-level failure: rare, but logged so the report identifies the bad shard.
+        # Chunk-level failure: logged so the report identifies failures.
         dead_letters.append({
             'type': 'CHUNK',
             'chunk': index,
@@ -145,7 +145,7 @@ class Command(BaseCommand):
                 chunk_log.append({k: result[k] for k in ('chunk', 'worker', 'records', 'failed_records', 'duration_ms')})
                 dead_letters.extend(result['dead_letters'])
 
-                # Reduce: merge each chunk's partial product/store totals.
+                # Merge each chunk's partial product/store totals.
                 for product_id, partial in result['products'].items():
                     total = product_totals[product_id]
                     total['qty'] += partial['qty']
