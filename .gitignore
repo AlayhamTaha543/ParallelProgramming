@@ -1,0 +1,53 @@
+# Byte-compiled / optimized / DLLs
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Pipenv
+Pipfile.lock
+
+# Pytest cache
+.pytest_cache/
+
+# Django / project files
+db.sqlite3
+local_settings.py
+media/
+staticfiles/
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# Logs and coverage
+logs/
+*.log
+.coverage
+coverage.xml
+htmlcov/
+
+# Docker override
+docker-compose.override.yml
+
+# Reports (generated)
+reports/*.json
+
+# Misc
+*.pyc
+*.pyo
+*.pyd
