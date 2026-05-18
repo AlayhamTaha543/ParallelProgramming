@@ -5,7 +5,12 @@ name = "pypi"
 
 [packages]
 django = "*"
-rest-framework-simplejwt = "*"
+djangorestframework-simplejwt = "*"
+python-dotenv = "*"
+djangorestframework = "*"
+drf-nested-routers = "*"
+psycopg2-binary = "*"
+gunicorn = "*"
 
 [dev-packages]
 

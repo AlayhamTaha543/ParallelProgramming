@@ -1,0 +1,48 @@
+#version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ecommerce_postgres
+    environment:
+      POSTGRES_DB: ecommerce_db
+      POSTGRES_USER: ecommerce_user
+      POSTGRES_PASSWORD: secure_password_here
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ecommerce_user -d ecommerce_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    container_name: ecommerce_web
+    command: bash /app/scripts/gunicorn_start.sh
+    env_file: .env
+    environment:
+      - PORT=8000
+      - GUNICORN_WORKERS=3
+      - GUNICORN_THREADS=2
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8001:8000"
+    restart: on-failure
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1024M
+
+volumes:
+  postgres_data:
