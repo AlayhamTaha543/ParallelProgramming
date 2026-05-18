@@ -8,6 +8,7 @@ from rest_framework.decorators import action
 
 from cart.models import Cart
 from cart_items.models import CartItem
+from order.tasks import send_order_email
 from order_items.models import OrderItem
 from products.models import Product
 
@@ -60,6 +61,13 @@ class OrderViewSet(ModelViewSet):
             OrderItem.objects.bulk_create(order_items)
             CartItem.objects.filter(cart=cart).delete()
 
+        # Asyncronous sending an email in order using redis & celery
+        transaction.on_commit(
+            lambda: (
+                send_order_email.delay(user.email, order.id)
+            )
+        )
+
     @action(detail=True, methods=['post'])
     def cancel(self, request, pk=None):
 
@@ -69,7 +77,6 @@ class OrderViewSet(ModelViewSet):
             raise ValidationError('Order already cancelled')
 
         with transaction.atomic():
-
             order_items = (
                 OrderItem.objects
                 .select_related('product')
@@ -77,16 +84,13 @@ class OrderViewSet(ModelViewSet):
             )
 
             for item in order_items:
-
                 product = (
                     Product.objects
                     .select_for_update()
                     .get(id=item.product.id)
                 )
-
                 product.stock += item.quantity
                 product.save()
-
             order.status = 'CANCELLED'
             order.save()
 

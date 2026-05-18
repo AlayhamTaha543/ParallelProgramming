@@ -6,6 +6,15 @@ name = "pypi"
 [packages]
 django = "*"
 rest-framework-simplejwt = "*"
+djangorestframework = "*"
+djangorestframework-simplejwt = "*"
+drf-nested-routers = "*"
+psycopg2 = "*"
+psycopg = "*"
+mysqlclient = "*"
+redis = "*"
+celery = "*"
+djangorestframework-stubs = "*"
 
 [dev-packages]
 
