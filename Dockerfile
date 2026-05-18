@@ -1,24 +1,19 @@
-FROM python:3.12-slim
+FROM python:3.14-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Install dependencies needed for some Python packages like mysqlclient and psycopg
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
-    default-libmysqlclient-dev \
-    pkg-config \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends build-essential libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip pipenv
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-COPY Pipfile Pipfile.lock /app/
+COPY . /app
 
-# Install dependencies directly into the system running in the container
-RUN pipenv install --system --deploy --ignore-pipfile || pipenv install --system --skip-lock
+EXPOSE 8000
 
-COPY . /app/
-
+CMD ["gunicorn", "ecommerce.wsgi:application", "--bind", "0.0.0.0:8000"]
