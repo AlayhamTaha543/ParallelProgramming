@@ -5,9 +5,16 @@ name = "pypi"
 
 [packages]
 django = "*"
-rest-framework-simplejwt = "*"
+djangorestframework = "*"
+psycopg2-binary = "*"
+djangorestframework-simplejwt = "*"
+drf-nested-routers = "*"
+gunicorn = "*"
+locust = "*"
+aiohttp = "*"
 
 [dev-packages]
+locust = "*"
 
 [requires]
 python_version = "3.14"
