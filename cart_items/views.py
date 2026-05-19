@@ -17,7 +17,9 @@ class CartItemViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated, IsCustomer, IsCartItemOwner]
 
     def get_cart(self):
-        return self.request.user.cart
+        # Safely return the user's cart; create one if it doesn't exist.
+        cart, _ = Cart.objects.get_or_create(user=self.request.user)
+        return cart
 
     def get_queryset(self):
         cart = self.get_cart()
