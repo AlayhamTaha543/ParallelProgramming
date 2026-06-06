@@ -13,11 +13,12 @@ from .models import Payment
 from .permissions import IsPaymentAccess
 from .serializers import PaymentSerializer
 
+from .tasks import generate_and_send_invoice
 
 class PaymentViewSet(ModelViewSet):
     serializer_class = PaymentSerializer
     permission_classes = [IsAuthenticated, IsPaymentAccess]
-    http_method_names = ['get', 'post', 'head', 'options']
+    http_method_names = ['get', 'post', 'head', 'options', 'put']
 
     def get_order(self):
         order_id = self.kwargs['order_pk']
@@ -51,3 +52,6 @@ class PaymentViewSet(ModelViewSet):
             serializer.save(order=order, amount=total_amount)
             order.status = Order.Status.PAID
             order.save(update_fields=['status'])
+
+        user_email = self.request.user.email
+        generate_and_send_invoice.delay(order.id, user_email)
