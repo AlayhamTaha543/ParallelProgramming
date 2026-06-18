@@ -59,10 +59,6 @@ services:
         limits:
           cpus: '1.0'
           memory: 1024M
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
 
   celery:
     build: .
