@@ -15,6 +15,8 @@ def invalidate_product_cache(sender, instance, **kwargs):
         cache.delete(cache_key)
         cache.delete(f"product:{instance.id}:price")
         cache.delete(f"product:{instance.id}:stock")
-        cache.delete_pattern(f"product_list:store:{instance.store_id}:url:*")
+        delete_pattern = getattr(cache, 'delete_pattern', None)
+        if delete_pattern:
+            cache.delete_pattern(f"product_list:store:{instance.store_id}:url:*")
     except Exception as e:
-        logger.error(f"Redis cache delete error: {e}")
+        logger.error(f"Cache delete error: {e}")
